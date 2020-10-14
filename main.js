@@ -107,4 +107,4 @@ dcclient.on('message', message => {
 	}
 });
 
-dcclient.login('NzYwMjI1NzE4MzU3MTk2ODMy.X3I9Xw.beSAKsu1mkchk06-89zYy2BxZ50');
+dcclient.login('YourBotToken');
