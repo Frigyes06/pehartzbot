@@ -12,7 +12,8 @@
     "discord.js": "^12.2.0",
     "googleapis": "^39.2.0",
     "promise": "^8.1.0",
-    "puppeteer": "^5.2.1"
+    "puppeteer": "^5.2.1",
+    "utf8": "^3.0.0"
   },
   "exports": {
     "./snippets.js": "./snippets.js"

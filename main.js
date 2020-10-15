@@ -1,71 +1,32 @@
 const Discord = require('discord.js');
-const {google} = require('googleapis');
-const sheets = google.sheets('v4');
-const keys = require('./keys.json');
-
-const client = new google.auth.JWT(
-	keys.client_email,
-    null,
-    keys.private_key,
-    ['https://www.googleapis.com/auth/spreadsheets']
-);
+const fs = require('fs');
+const utf8 = require('utf8');
 
 
-client.authorize(function (err, tokens) {
-
-    if (err) {
-        console.log(err);
-        return;
-    } else {
-        console.log('Connected to google api!');
-        gsrun(client);
-    }
-
-});
-
-
-async function gsrun(cl) {
-
-    const gsapi = google.sheets({ verion:'v4', auth: cl });
-
-    var updateOptions = {
-        "spreadsheetId" : '1b06wG8Gejoj6C8O4jTJ32Kz9upDf0boLTqtBxjIYMN4',
-        "range" : 'A1',
-        "valueInputOption": 'USER_ENTERED',
-        "resource": {
-        "values": [
-          [
-            "app"
-          ]
-        ]
-      }
-    };
-
-    this.gsapi.spreadsheets.values.append(updateOptions, (err, result) => {
-		if (err) {
-			// Handle error
-			console.log(err);
-		} else {
-			console.log('%d cells updated.', result.updatedCells);
-		}
-	});
-	return;
-}
-
-function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
-}
-
-const dcclient = new Discord.Client
+const client = new Discord.Client
 
 const prefix = '';
 
-dcclient.once('ready', () => {
+client.commands = new Discord.Collection();
+
+const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
+for(const file of commandFiles){
+	const command = require(`./commands/${file}`);
+
+	client.commands.set(command.name, command);
+}
+
+
+function getRandomInt(max) {
+	return Math.floor(Math.random() * Math.floor(max));
+}
+
+client.once('ready', () => {
 	console.log('Pehartz bot is online!');
-	dcclient.user.setActivity('Kell segítség? -help');
+	client.user.setActivity('Kell segítség? -help');
 });
 
-dcclient.on('message', message => {
+client.on('message', message => {
 	if(!message.content.startsWith(prefix) || message.author.bot) return;
 	
 	const args = message.content.slice(prefix.length).split(/ +/);
@@ -75,36 +36,34 @@ dcclient.on('message', message => {
 	if(rand === 2){
 		message.channel.send('Egyes!!!');
 	} else{
-	if(command === 'help'){
-		message.channel.send('-help : Parancsok. \n-beer : Sör. \nPeharc bot is WIP');
-	}
-	if(command === 'sör'){
-		message.channel.send(':beer:');
-	}
-	if(command === 'vodka'){
-		message.channel.send('Nincs vodka, csak sör!');
-	}
-	if(command === 'peharc'){
-		message.channel.send(':jambusos:');
-    }
-    if (command === 'pálinka') {
-        message.channel.send('Pálinka meg főleg nincs!');
-        message.channel.send('Csak a sörre van affinitás. :beer:');
-    }
-	if(command === 'approvehf'){
-        message.channel.send('Approved!');
-        gsrun(client);
-    }
-    if (command === 'autista') {
-        message.channel.send('Én is autista vagyok!');
-    }
-    if (command === 'bor') {
-        message.channel.send(':beer: : Engem már senki se szeret!');
-    }
-	if (command === 'tanarur'){
-		message.channel.send('Egyes!!!');
-	}
+		if(command === 'help'){
+			client.commands.get('help').execute(message, args);
+		}
+		if(command === 'sör'){
+			client.commands.get('sor').execute(message, args);
+		}
+		if(command === 'vodka'){
+			client.commands.get('vodka').execute(message, args);
+		}
+		if(command === 'peharc'){
+			client.commands.get('peharc').execute(message, args);
+		}
+		if (command === 'pálinka') {
+			client.commands.get('pálinka').execute(message, args);
+		}
+		if (command === 'autista') {
+			client.commands.get('autista').execute(message, args);
+		}
+	    if (command === 'bor') {
+			client.commands.get('bor').execute(message, args);
+	    } else
+		if (command === 'tanarur') {
+			client.commands.get('tanarur').execute(message, args);
+		} else
+		if (command === 'ping') {
+			client.commands.get('ping').execute(message, args);
+		}
 	}
 });
 
-dcclient.login('YourBotToken');
+client.login('NzYwMjI1NzE4MzU3MTk2ODMy.X3I9Xw.asX0ek9n5Lzq4d9dXxtRIZaat5I');
