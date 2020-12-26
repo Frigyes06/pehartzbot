@@ -1,62 +1,59 @@
 const Discord = require('discord.js');
 const fs = require('fs');
-const utf8 = require('utf8');
 
+const client = new Discord.Client						//Initiate client
 
-const client = new Discord.Client
+const prefix = '';								//Sets command prefix
 
-const prefix = '';
+client.commands = new Discord.Collection();					//Initiate bot commands
 
-client.commands = new Discord.Collection();
+const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));	//Gekky stuff reads in command files
 
-const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
 for(const file of commandFiles){
 	const command = require(`./commands/${file}`);
-
 	client.commands.set(command.name, command);
 }
 
-
 function getRandomInt(max) {
-	return Math.floor(Math.random() * Math.floor(max));
+	return Math.floor(Math.random() * Math.floor(max));			//Function for random numbers
 }
 
 client.once('ready', () => {
-	console.log('Pehartz bot is online!');
-	client.user.setActivity('Kell segítség? -help');
+	console.log('Pehartz bot is online!');					//Debug
+	client.user.setActivity('Kell segítség? -help');			//Sets bot status
 });
 
-client.on('message', message => {
-	if(!message.content.startsWith(prefix) || message.author.bot) return;
+client.on('message', message => {						//Activates if it gets a message
+	if(!message.content.startsWith(prefix) || message.author.bot) return;	//Cheks if the message is a command, and it is not from itself
 	
-	const args = message.content.slice(prefix.length).split(/ +/);
-	const command = args.shift().toLowerCase();
-	console.log(command);
-	rand = getRandomInt(100);
+	const args = message.content.slice(prefix.length).split(/ +/);		//Cuts down the prefix
+	const command = args.shift().toLowerCase();				//Transforms command to lowercase
+	console.log(command);							//Some debug
+	rand = getRandomInt(100);						//Random shouting
 	if(rand === 2){
 		message.channel.send('Egyes!!!');
 	} else{
-		if(command === 'help'){
+		if(command === 'help'){						//Cheks for commands
 			client.commands.get('help').execute(message, args);
-		}
+		} else
 		if(command === 'sör'){
 			client.commands.get('sor').execute(message, args);
-		}
+		} else
 		if(command === 'vodka'){
 			client.commands.get('vodka').execute(message, args);
-		}
+		} else
 		if(command === 'peharc'){
 			client.commands.get('peharc').execute(message, args);
-		}
+		} else
 		if (command === 'pálinka') {
 			client.commands.get('pálinka').execute(message, args);
-		}
+		} else
 		if (command === 'autista') {
 			client.commands.get('autista').execute(message, args);
-		}
-	    if (command === 'bor') {
+		} else
+	    	if (command === 'bor') {
 			client.commands.get('bor').execute(message, args);
-	    } else
+		} else
 		if (command === 'tanarur') {
 			client.commands.get('tanarur').execute(message, args);
 		} else
@@ -66,4 +63,4 @@ client.on('message', message => {
 	}
 });
 
-client.login('BotToken');
+client.login('YourBotToken');							//Logs in with bot token
